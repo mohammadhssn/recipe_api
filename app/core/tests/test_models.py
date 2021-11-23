@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 
-class TestModel(TestCase):
+class ModelTests(TestCase):
 
     def test_create_user_with_email_success(self):
         """Test creating a new user with an email successfully"""
