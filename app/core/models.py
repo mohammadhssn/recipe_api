@@ -11,7 +11,7 @@ class UserManager(BaseUserManager):
             raise ValidationError('user must be have email address')
         user = self.model(email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
-        user.save(self._db)
+        user.save(using=self._db)
 
         return user
 
@@ -19,7 +19,7 @@ class UserManager(BaseUserManager):
         user = self.create_user(email, password)
         user.is_staff = True
         user.is_superuser = True
-        user.save(self._db)
+        user.save(using=self._db)
 
         return user
 
