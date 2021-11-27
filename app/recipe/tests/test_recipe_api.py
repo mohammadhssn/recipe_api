@@ -161,3 +161,44 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(ingredients.count(), 2)
         self.assertIn(ingredient1, ingredients)
         self.assertIn(ingredient2, ingredients)
+
+    def test_partial_update_recipe(self):
+        """Test updating recipe with patch"""
+
+        recipe = sample_recipe(user=self.user)
+        recipe.tags.add(sample_tag(user=self.user))
+        new_tag = sample_tag(user=self.user, name='Curry')
+        payload = {
+            'title': 'chocolate',
+            'tags': [new_tag.id]
+        }
+
+        url = detail_recipe(recipe.id)
+        self.client.patch(url, payload)
+        recipe.refresh_from_db()
+
+        self.assertEqual(recipe.title, payload.get('title'))
+        tags = recipe.tags.all()
+        self.assertEqual(tags.count(), 1)
+        self.assertIn(new_tag, tags)
+
+    def test_full_update_recipe(self):
+        """Test Updating recipe with put"""
+
+        recipe = sample_recipe(user=self.user)
+        recipe.tags.add(sample_tag(user=self.user))
+        payload = {
+            'title': 'spaghetti carbonara',
+            'time_minutes': 34,
+            'price': 5.0
+        }
+
+        url = detail_recipe(recipe.id)
+        self.client.put(url, payload)
+        recipe.refresh_from_db()
+
+        self.assertEqual(recipe.title, payload.get('title'))
+        self.assertEqual(recipe.time_minutes, payload.get('time_minutes'))
+        self.assertEqual(recipe.price, payload.get('price'))
+        tags = recipe.tags.all()
+        self.assertEqual(len(tags), 0)
